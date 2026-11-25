@@ -1,4 +1,4 @@
-// render.js — Dapur Panas: Kitchen Rush
+// render.js — Hot Kitchen Rush
 // Every pixel of the game is drawn here on a 2D canvas: the tiled floor,
 // the stations, the food, the chef, the order board, the HUD and the
 // title / game-over screens. No images are loaded; all art is shapes.
@@ -9,6 +9,7 @@ import {
   itemColor, itemName, recipeById,
 } from './config.js';
 import { isPlate, stationCenter } from './world.js';
+import { TOUCH } from './touch.js';
 
 // ------------------------------------------------------------------ helpers
 
@@ -209,10 +210,10 @@ function drawStation(ctx, world, s, highlight) {
         if (s.progress > 0 && s.progress < CHOP_TIME) {
           progressBar(ctx, s.x + 12, s.y + s.h - 14, s.w - 24, 8, s.progress / CHOP_TIME, '#58b368');
         }
-        if (s.progress >= CHOP_TIME) text(ctx, 'Siap!', c.x, s.y + s.h - 10, 12, '#2f7d3d');
+        if (s.progress >= CHOP_TIME) text(ctx, 'Ready!', c.x, s.y + s.h - 10, 12, '#2f7d3d');
       } else {
-        text(ctx, 'Talenan', c.x, c.y - 2, 14, '#7a5c33');
-        text(ctx, 'tahan E', c.x, c.y + 16, 11, '#9a7c52');
+        text(ctx, 'Board', c.x, c.y - 2, 14, '#7a5c33');
+        text(ctx, 'hold E', c.x, c.y + 16, 11, '#9a7c52');
       }
       break;
     }
@@ -222,7 +223,7 @@ function drawStation(ctx, world, s, highlight) {
         ctx.fillStyle = '#f7f5ef';
         ctx.beginPath(); ctx.ellipse(c.x, c.y + 12 - i * 7, 30, 8, 0, 0, Math.PI * 2); ctx.fill();
       }
-      text(ctx, 'Piring x' + s.count, c.x, s.y + 16, 13, '#fff');
+      text(ctx, 'Plates x' + s.count, c.x, s.y + 16, 13, '#fff');
       break;
     }
     case 'sink': {
@@ -234,12 +235,12 @@ function drawStation(ctx, world, s, highlight) {
         if (s.progress > 0 && s.progress < WASH_TIME) {
           progressBar(ctx, s.x + 12, s.y + s.h - 14, s.w - 24, 8, s.progress / WASH_TIME, '#5b8fb0');
         }
-        if (s.progress >= WASH_TIME) text(ctx, 'Bersih!', c.x, s.y + s.h - 10, 12, '#fff');
+        if (s.progress >= WASH_TIME) text(ctx, 'Clean!', c.x, s.y + s.h - 10, 12, '#fff');
       } else if (s.dirty > 0) {
-        text(ctx, 'Piring kotor: ' + s.dirty, c.x, c.y, 12, '#fff');
+        text(ctx, 'Dirty plates: ' + s.dirty, c.x, c.y, 12, '#fff');
       } else {
-        text(ctx, 'Wastafel', c.x, c.y - 2, 14, '#dff2fa');
-        text(ctx, 'tahan E', c.x, c.y + 16, 11, '#bfe0ef');
+        text(ctx, 'Sink', c.x, c.y - 2, 14, '#dff2fa');
+        text(ctx, 'hold E', c.x, c.y + 16, 11, '#bfe0ef');
       }
       break;
     }
@@ -261,9 +262,9 @@ function drawStation(ctx, world, s, highlight) {
         progressBar(ctx, s.x + 10, s.y + s.h - 12, s.w - 20, 7, s.t / PATTY_COOK_TIME, s.t >= PATTY_COOK_TIME ? '#58b368' : '#e8912d');
       } else if (s.state === 'burnt') {
         drawItem(ctx, 'burnt', c.x, c.y + 2, 20);
-        text(ctx, 'GOSONG!', c.x, s.y + s.h - 8, 11, '#ff6b5e');
+        text(ctx, 'BURNT!', c.x, s.y + s.h - 8, 11, '#ff6b5e');
       } else {
-        text(ctx, 'Wajan', c.x, c.y + 2, 13, '#aaa');
+        text(ctx, 'Pan', c.x, c.y + 2, 13, '#aaa');
       }
       break;
     }
@@ -280,20 +281,20 @@ function drawStation(ctx, world, s, highlight) {
       } else if (s.state === 'ready') {
         ctx.fillStyle = '#e8a33d';
         ctx.beginPath(); ctx.ellipse(c.x, c.y - 2, 24, 11, 0, 0, Math.PI * 2); ctx.fill();
-        text(ctx, 'Sup siap!', c.x, s.y + s.h - 8, 11, '#ffd94a');
+        text(ctx, 'Soup ready!', c.x, s.y + s.h - 8, 11, '#ffd94a');
       } else if (s.items.length) {
         s.items.forEach((it, i) => drawItem(ctx, it, c.x - 12 + i * 24, c.y - 2, 12));
-        text(ctx, 'butuh ' + (s.items.includes('onion-chopped') ? 'tomat' : 'bawang'), c.x, s.y + s.h - 8, 11, '#ccc');
+        text(ctx, 'needs ' + (s.items.includes('onion-chopped') ? 'tomato' : 'onion'), c.x, s.y + s.h - 8, 11, '#ccc');
       } else {
-        text(ctx, 'Panci', c.x, c.y + 2, 13, '#aaa');
+        text(ctx, 'Pot', c.x, c.y + 2, 13, '#aaa');
       }
       break;
     }
     case 'serve': {
       stationBase(ctx, s, '#c94f43', '#8e2f26');
-      text(ctx, 'SAJIKAN', c.x, s.y + 16, 15, '#fff');
-      text(ctx, 'letakkan piring', c.x, s.y + 36, 11, '#ffd9d4');
-      text(ctx, 'yang cocok', c.x, s.y + 52, 11, '#ffd9d4');
+      text(ctx, 'SERVE', c.x, s.y + 16, 15, '#fff');
+      text(ctx, 'place the plate', c.x, s.y + 36, 11, '#ffd9d4');
+      text(ctx, 'that matches', c.x, s.y + 52, 11, '#ffd9d4');
       // Bell on the counter.
       ctx.fillStyle = '#ffd94a';
       ctx.beginPath(); ctx.arc(c.x + 40, s.y + s.h - 14, 8, Math.PI, 0); ctx.fill();
@@ -306,7 +307,7 @@ function drawStation(ctx, world, s, highlight) {
       rr(ctx, c.x - 26, s.y + 12, 52, 36, 6); ctx.fill();
       ctx.fillStyle = '#777';
       ctx.fillRect(c.x - 30, s.y + 6, 60, 8);
-      text(ctx, 'Sampah', c.x, s.y + s.h - 10, 12, '#ddd');
+      text(ctx, 'Trash', c.x, s.y + s.h - 10, 12, '#ddd');
       break;
     }
     default:
@@ -367,7 +368,7 @@ function drawOrderCard(ctx, order, x, y, w, h) {
   });
   // Countdown bar.
   progressBar(ctx, x + 10, y + h - 14, w - 20, 8, frac, urgent ? '#e8443a' : '#58b368');
-  text(ctx, Math.ceil(order.timeLeft) + ' dtk', x + w - 10, y + h - 26, 11, urgent ? '#e8443a' : '#666', 'bold', 'right');
+  text(ctx, Math.ceil(order.timeLeft) + ' sec', x + w - 10, y + h - 26, 11, urgent ? '#e8443a' : '#666', 'bold', 'right');
 }
 
 function drawBoard(ctx, world) {
@@ -375,12 +376,12 @@ function drawBoard(ctx, world) {
   ctx.fillRect(0, 0, VIEW_W, BOARD_H);
   ctx.fillStyle = '#3a2d20';
   ctx.fillRect(0, BOARD_H - 6, VIEW_W, 6);
-  text(ctx, 'DAPUR PANAS', 16, 22, 20, '#ffd94a', 'bold', 'left');
+  text(ctx, 'HOT KITCHEN', 16, 22, 20, '#ffd94a', 'bold', 'left');
   text(ctx, 'Kitchen Rush', 16, 44, 12, '#d9c39a', 'normal', 'left');
   const cardW = 218, cardH = 88, gap = 10;
   let x = 200;
   if (world.orders.length === 0) {
-    text(ctx, 'Belum ada pesanan…', 220, 52, 14, '#d9c39a', 'normal', 'left');
+    text(ctx, 'No orders yet…', 220, 52, 14, '#d9c39a', 'normal', 'left');
   }
   for (const o of world.orders) {
     drawOrderCard(ctx, o, x, 8, cardW, cardH);
@@ -391,22 +392,22 @@ function drawBoard(ctx, world) {
   const ss = String(Math.floor(world.timeLeft % 60)).padStart(2, '0');
   const urgent = world.timeLeft <= 30;
   text(ctx, mm + ':' + ss, VIEW_W - 16, 26, 30, urgent ? '#ff6b5e' : '#fff', 'bold', 'right');
-  text(ctx, 'SKOR  ' + world.score, VIEW_W - 16, 56, 18, '#ffd94a', 'bold', 'right');
+  text(ctx, 'SCORE  ' + world.score, VIEW_W - 16, 56, 18, '#ffd94a', 'bold', 'right');
   text(ctx, world.combo > 1 ? 'COMBO x' + world.combo : 'combo x1', VIEW_W - 16, 78, 13, '#ffb347', 'bold', 'right');
 }
 
 function drawRecipeList(ctx) {
   // Small recipe reference at the bottom-left, above the trash row.
   const recipes = [
-    'Salad Segar: tomat+selada',
-    'Burger Klasik: patty+selada+roti',
-    'Sup Bawang: sup+roti',
-    'Burger Bawang: patty+bawang+roti',
-    'Salad Komplit: tomat+selada+bawang',
+    'Fresh Salad: tomato+lettuce',
+    'Classic Burger: patty+lettuce+bun',
+    'Onion Soup: soup+bun',
+    'Onion Burger: patty+onion+bun',
+    'Complete Salad: tomato+lettuce+onion',
   ];
   ctx.fillStyle = 'rgba(43,33,24,0.85)';
   rr(ctx, 10, VIEW_H - 118, 250, 108, 8); ctx.fill();
-  text(ctx, 'RESEP', 22, VIEW_H - 104, 12, '#ffd94a', 'bold', 'left');
+  text(ctx, 'RECIPES', 22, VIEW_H - 104, 12, '#ffd94a', 'bold', 'left');
   recipes.forEach((r, i) => {
     text(ctx, r, 22, VIEW_H - 86 + i * 16, 11, '#f2e8d5', 'normal', 'left');
   });
@@ -420,18 +421,20 @@ function drawFlash(ctx, world) {
 }
 
 function drawHint(ctx, world, active) {
-  let hint = 'WASD / Panah: gerak   •   E / Spasi: ambil & pakai   •   Q: dash   •   Klik: interaksi';
+  let hint = TOUCH
+    ? 'Left stick: move   •   INTERACT: grab & use   •   DASH: dash'
+    : 'WASD / Arrows: move   •   E / Space: grab & use   •   Q: dash   •   Click: interact';
   if (active) {
     const labels = {
-      crate: 'Ambil ' + (active.label || ''),
-      board: active.item ? (active.progress >= CHOP_TIME ? 'Ambil hasil potongan' : 'Tahan E untuk memotong') : 'Letakkan bahan untuk dipotong',
-      plates: 'Ambil piring bersih',
-      sink: active.item ? (active.progress >= WASH_TIME ? 'Ambil piring bersih' : 'Tahan E untuk mencuci') : 'Letakkan piring kotor',
-      counter: active.item ? 'Ambil / rakit di sini' : 'Letakkan di sini',
-      pan: active.state === 'empty' ? 'Letakkan patty mentah' : active.state === 'cooked' ? 'Ambil patty masak' : active.state === 'burnt' ? 'Gosong! Buang ke sampah' : 'Memasak…',
-      pot: active.state === 'ready' ? 'Sendok sup ke piring' : 'Masukkan bawang + tomat potong',
-      serve: 'Sajikan piring yang cocok',
-      trash: 'Buang yang dibawa',
+      crate: 'Take ' + (active.label || ''),
+      board: active.item ? (active.progress >= CHOP_TIME ? 'Take the chopped result' : 'Hold E to chop') : 'Place an ingredient to chop',
+      plates: 'Take a clean plate',
+      sink: active.item ? (active.progress >= WASH_TIME ? 'Take a clean plate' : 'Hold E to wash') : 'Place the dirty plate',
+      counter: active.item ? 'Take / assemble here' : 'Place here',
+      pan: active.state === 'empty' ? 'Place a raw patty' : active.state === 'cooked' ? 'Take the cooked patty' : active.state === 'burnt' ? 'Burnt! Throw it in the trash' : 'Cooking…',
+      pot: active.state === 'ready' ? 'Ladle the soup onto a plate' : 'Add chopped onion + tomato',
+      serve: 'Serve the matching plate',
+      trash: 'Throw away what you carry',
     };
     hint = labels[active.kind] || hint;
   }
@@ -451,34 +454,36 @@ function overlay(ctx, alpha) {
 
 function drawTitle(ctx, world) {
   overlay(ctx, 0.55);
-  text(ctx, 'DAPUR PANAS', VIEW_W / 2, 210, 72, '#ffd94a', 'bold');
+  text(ctx, 'HOT KITCHEN', VIEW_W / 2, 210, 72, '#ffd94a', 'bold');
   text(ctx, 'K I T C H E N   R U S H', VIEW_W / 2, 262, 22, '#fff', 'bold');
-  text(ctx, 'Masak cepat, sajikan tepat waktu!', VIEW_W / 2, 300, 18, '#f2e8d5');
+  text(ctx, 'Cook fast, serve on time!', VIEW_W / 2, 300, 18, '#f2e8d5');
   ctx.fillStyle = '#c94f43';
   rr(ctx, VIEW_W / 2 - 170, 330, 340, 52, 12); ctx.fill();
-  text(ctx, 'TEKAN ENTER / KLIK UNTUK MULAI', VIEW_W / 2, 357, 18, '#fff', 'bold');
-  text(ctx, 'Shift 3 menit • 5 resep • Jangan biarkan patty gosong!', VIEW_W / 2, 412, 14, '#d9c39a');
-  text(ctx, 'WASD / Panah gerak  •  E / Spasi interaksi  •  Q dash  •  R restart', VIEW_W / 2, 440, 14, '#d9c39a');
-  text(ctx, 'Skor terbaik: ' + (world.best || 0), VIEW_W / 2, 478, 14, '#ffd94a', 'bold');
+  text(ctx, 'PRESS ENTER / TAP TO START', VIEW_W / 2, 357, 18, '#fff', 'bold');
+  text(ctx, '3-minute shift • 5 recipes • Don\'t let the patty burn!', VIEW_W / 2, 412, 14, '#d9c39a');
+  text(ctx, TOUCH
+    ? 'Left stick to move  •  INTERACT to use  •  DASH to dash  •  RESTART to restart'
+    : 'WASD / Arrows to move  •  E / Space to interact  •  Q dash  •  R restart', VIEW_W / 2, 440, 14, '#d9c39a');
+  text(ctx, 'Best score: ' + (world.best || 0), VIEW_W / 2, 478, 14, '#ffd94a', 'bold');
 }
 
 function drawGameOver(ctx, world) {
   overlay(ctx, 0.6);
-  text(ctx, world.overReason || 'Shift Selesai!', VIEW_W / 2, 180, 44, '#ffd94a', 'bold');
-  text(ctx, 'SKOR AKHIR', VIEW_W / 2, 240, 16, '#d9c39a', 'bold');
+  text(ctx, world.overReason || 'Shift over!', VIEW_W / 2, 180, 44, '#ffd94a', 'bold');
+  text(ctx, 'FINAL SCORE', VIEW_W / 2, 240, 16, '#d9c39a', 'bold');
   text(ctx, String(world.score), VIEW_W / 2, 292, 64, '#fff', 'bold');
   const rows = [
-    'Hidangan disajikan: ' + world.servedCorrect,
-    'Pesanan hangus: ' + world.expired,
-    'Sajian salah: ' + world.servedWrong,
-    'Combo terbaik: x' + world.bestCombo,
-    'Akurasi: ' + (world.accuracy != null ? world.accuracy : 100) + '%',
-    'Skor terbaik: ' + (world.best || 0),
+    'Dishes served: ' + world.servedCorrect,
+    'Orders expired: ' + world.expired,
+    'Wrong serves: ' + world.servedWrong,
+    'Best combo: x' + world.bestCombo,
+    'Accuracy: ' + (world.accuracy != null ? world.accuracy : 100) + '%',
+    'Best score: ' + (world.best || 0),
   ];
   rows.forEach((r, i) => text(ctx, r, VIEW_W / 2, 350 + i * 28, 16, '#f2e8d5'));
   ctx.fillStyle = '#c94f43';
   rr(ctx, VIEW_W / 2 - 150, 540, 300, 48, 12); ctx.fill();
-  text(ctx, 'TEKAN R UNTUK MAIN LAGI', VIEW_W / 2, 565, 17, '#fff', 'bold');
+  text(ctx, 'PRESS R / TAP TO PLAY AGAIN', VIEW_W / 2, 565, 17, '#fff', 'bold');
 }
 
 // ------------------------------------------------------------------ main
@@ -492,7 +497,9 @@ export function render(ctx, world, active) {
   drawChef(ctx, world);
   drawBoard(ctx, world);
   if (world.mode === 'playing') {
-    drawRecipeList(ctx);
+    // On touch devices the joystick sits over the recipe list corner, so
+    // the list is hidden there — the order cards already show the icons.
+    if (!TOUCH) drawRecipeList(ctx);
     drawFlash(ctx, world);
     drawHint(ctx, world, active);
   }

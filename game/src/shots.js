@@ -1,4 +1,4 @@
-// shots.js — Dapur Panas: Kitchen Rush
+// shots.js — Hot Kitchen Rush
 // Deterministic staging for the four screenshots (?shot=title|play|
 // assembly|serve&seed=1). Each shot plays the real rules from a fresh
 // world with a small scripted autopilot at a fixed timestep, so every

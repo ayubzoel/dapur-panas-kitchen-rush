@@ -1,4 +1,4 @@
-// world.js — Dapur Panas: Kitchen Rush
+// world.js — Hot Kitchen Rush
 // The whole game state and its rules: stations, orders, cooking, chopping,
 // washing, serving and scoring. Rendering and input live elsewhere; this
 // module only knows about the kitchen and what happens in it.
@@ -208,7 +208,7 @@ function expireOrder(world, order) {
   world.score -= EXPIRE_PENALTY;
   world.combo = 0;
   world.expired += 1;
-  setFlash(world, 'Order hangus! -' + EXPIRE_PENALTY, '#ff6b5e');
+  setFlash(world, 'Order expired! -' + EXPIRE_PENALTY, '#ff6b5e');
   pushEvent(world, 'expire');
 }
 
@@ -246,7 +246,7 @@ export function interact(world) {
     }
     case 'plates': {
       if (carry) return null;
-      if (s.count <= 0) { setFlash(world, 'Piring habis! Cuci dulu.', '#ff6b5e'); return null; }
+      if (s.count <= 0) { setFlash(world, 'Out of plates! Wash some first.', '#ff6b5e'); return null; }
       s.count -= 1;
       chef.carry = emptyPlate();
       pushEvent(world, 'pickup');
@@ -328,7 +328,7 @@ export function interact(world) {
       }
       world.servedWrong += 1;
       world.combo = 0;
-      setFlash(world, 'Bukan pesanan itu!', '#ff6b5e');
+      setFlash(world, 'Not that order!', '#ff6b5e');
       pushEvent(world, 'error');
       return 'reject';
     }
@@ -493,7 +493,7 @@ export function update(world, dt) {
 
   if (world.timeLeft <= 0) {
     world.mode = 'over';
-    world.overReason = 'Shift selesai!';
+    world.overReason = 'Shift over!';
     const total = world.servedCorrect + world.servedWrong + world.expired;
     world.accuracy = total > 0 ? Math.round((world.servedCorrect / total) * 100) : 100;
     if (world.score > world.best) world.best = world.score;

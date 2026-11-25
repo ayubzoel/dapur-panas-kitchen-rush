@@ -1,4 +1,4 @@
-// serve.ts — Dapur Panas: Kitchen Rush
+// serve.ts — Hot Kitchen Rush
 // A tiny static file server (Node standard library only) that serves the
 // game/ directory on http://localhost:8080 for local play-testing and for
 // taking the screenshots. No dependencies, no network beyond localhost.
@@ -44,5 +44,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Dapur Panas on http://localhost:${port}/`);
+  console.log(`Hot Kitchen on http://localhost:${port}/`);
 });

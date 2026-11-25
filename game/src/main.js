@@ -1,4 +1,4 @@
-// main.js — Dapur Panas: Kitchen Rush
+// main.js — Hot Kitchen Rush
 // Bootstrap: wires the canvas, input, audio, world and renderer together
 // and runs the fixed-step game loop. Also honours ?shot=…&seed=… for the
 // deterministic staged screenshots, and exposes a small debug hook.
@@ -10,6 +10,7 @@ import {
 } from './world.js';
 import { render } from './render.js';
 import { createInput, clickSteering } from './input.js';
+import { createTouchControls } from './touch.js';
 import { createAudio } from './audio.js';
 import { stageShot } from './shots.js';
 
@@ -28,6 +29,7 @@ function readShot() {
 
 const world = createWorld(readSeed());
 const input = createInput(canvas);
+createTouchControls(input);
 const audio = createAudio();
 
 // Best score survives in localStorage; a missing or broken store is fine.
@@ -65,7 +67,7 @@ if (shotName) {
   stageShot(world, shotName);
   world.paused = true;
   shotStaged = true;
-  document.title = 'Dapur Panas — shot ' + shotName;
+  document.title = 'Hot Kitchen — shot ' + shotName;
 }
 
 // ------------------------------------------------------------------ loop

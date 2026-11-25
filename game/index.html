@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <link rel="icon" href="data:,">
-<title>Dapur Panas: Kitchen Rush</title>
+<title>Hot Kitchen Rush</title>
 <style>
   html, body {
     margin: 0;
@@ -12,12 +12,14 @@
     background: #1c130c;
     height: 100%;
     overflow: hidden;
+    overscroll-behavior: none;
   }
   body {
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: system-ui, sans-serif;
+    touch-action: manipulation;
   }
   #wrap {
     width: min(100vw, calc(100vh * 1280 / 720));
@@ -29,11 +31,110 @@
     height: 100%;
     background: #e8dcc8;
     cursor: pointer;
+    touch-action: none;
   }
+  /* ---- touch controls (phones) ---- */
+  #touch-root {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    display: none;
+  }
+  #touch-root.on { display: block; }
+  .touch-joy {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(43, 33, 24, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    pointer-events: auto;
+    touch-action: none;
+  }
+  .touch-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 50%;
+    background: rgba(255, 217, 74, 0.9);
+  }
+  .touch-btn {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    text-align: center;
+  }
+  .touch-btn .key { font-size: 10px; opacity: 0.8; }
+  .touch-btn.pressed { filter: brightness(1.25); }
+  .touch-btn.interact {
+    right: 12px;
+    bottom: 12px;
+    width: 84px;
+    height: 84px;
+    background: rgba(88, 179, 104, 0.88);
+    font-size: 13px;
+  }
+  .touch-btn.dash {
+    right: 112px;
+    bottom: 96px;
+    width: 60px;
+    height: 60px;
+    background: rgba(232, 182, 76, 0.88);
+    font-size: 12px;
+  }
+  .touch-btn.restart {
+    right: 12px;
+    top: 64px;
+    width: 48px;
+    height: 48px;
+    background: rgba(201, 79, 67, 0.88);
+    font-size: 10px;
+  }
+  #rotate-hint {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11;
+    background: rgba(43, 33, 24, 0.92);
+    color: #ffd94a;
+    font: bold 13px system-ui, sans-serif;
+    padding: 8px 14px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 92vw;
+  }
+  body.touch-on.portrait #rotate-hint { display: block; }
+  /* In portrait the canvas strip sits under the hint so the touch
+     controls below it never cover the game. */
+  body.touch-on.portrait { justify-content: flex-start; }
+  body.touch-on.portrait #wrap { margin-top: 56px; }
+  /* In portrait RESTART moves below the canvas instead of the top corner,
+     where it would cover the timer and score on the order board. */
+  body.touch-on.portrait .touch-btn.restart { top: auto; bottom: 210px; }
 </style>
 </head>
 <body>
 <div id="wrap"><canvas id="game" width="1280" height="720"></canvas></div>
+<div id="touch-root"></div>
+<div id="rotate-hint">Rotate your phone for the best view — you can still play in portrait!</div>
 <script type="module" src="./src/main.js"></script>
 </body>
 </html>

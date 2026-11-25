@@ -1,4 +1,4 @@
-// audio.js — Dapur Panas: Kitchen Rush
+// audio.js — Hot Kitchen Rush
 // Tiny synthesised sound effects with the Web Audio API. No audio files,
 // no network: every sound is an oscillator (and a little noise) shaped in
 // code. Audio starts only after the first user gesture.

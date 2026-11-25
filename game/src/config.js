@@ -1,4 +1,4 @@
-// config.js — Dapur Panas: Kitchen Rush
+// config.js — Hot Kitchen Rush
 // All tuning constants for the game live here: canvas size, timings,
 // recipes, scoring and difficulty. Nothing in this file touches the network.
 
@@ -41,55 +41,55 @@ export const COMBO_MAX = 3;
 // Ingredient catalogue. `choppable` items can go on a cutting board;
 // `cookable` items go in a pan; `soup` items go in the pot.
 export const INGREDIENTS = {
-  tomato: { id: 'tomato', name: 'Tomat', color: '#e8443a', dark: '#b02a22', choppable: true },
-  lettuce: { id: 'lettuce', name: 'Selada', color: '#58b368', dark: '#2f7d3d', choppable: true },
-  onion: { id: 'onion', name: 'Bawang', color: '#b678d6', dark: '#7d4a9e', choppable: true },
+  tomato: { id: 'tomato', name: 'Tomato', color: '#e8443a', dark: '#b02a22', choppable: true },
+  lettuce: { id: 'lettuce', name: 'Lettuce', color: '#58b368', dark: '#2f7d3d', choppable: true },
+  onion: { id: 'onion', name: 'Onion', color: '#b678d6', dark: '#7d4a9e', choppable: true },
   patty: { id: 'patty', name: 'Patty', color: '#8a5a33', dark: '#5d3a1e', cookable: true },
-  bun: { id: 'bun', name: 'Roti', color: '#f2c879', dark: '#c99a4a' },
+  bun: { id: 'bun', name: 'Bun', color: '#f2c879', dark: '#c99a4a' },
 };
 
 // Chopped / cooked variants keep the same base colour with a marker.
 export const VARIANTS = {
-  'tomato-chopped': { base: 'tomato', name: 'Tomat Potong', color: '#e8443a' },
-  'lettuce-chopped': { base: 'lettuce', name: 'Selada Potong', color: '#58b368' },
-  'onion-chopped': { base: 'onion', name: 'Bawang Potong', color: '#b678d6' },
-  'patty-cooked': { base: 'patty', name: 'Patty Masak', color: '#6e4423' },
-  soup: { base: 'onion', name: 'Sup Bawang', color: '#d98a2b' },
+  'tomato-chopped': { base: 'tomato', name: 'Chopped Tomato', color: '#e8443a' },
+  'lettuce-chopped': { base: 'lettuce', name: 'Chopped Lettuce', color: '#58b368' },
+  'onion-chopped': { base: 'onion', name: 'Chopped Onion', color: '#b678d6' },
+  'patty-cooked': { base: 'patty', name: 'Cooked Patty', color: '#6e4423' },
+  soup: { base: 'onion', name: 'Onion Soup', color: '#d98a2b' },
 };
 
 // Every dish is served on a plate. `needs` lists the plate contents.
 export const RECIPES = [
   {
     id: 'salad',
-    name: 'Salad Segar',
+    name: 'Fresh Salad',
     needs: ['tomato-chopped', 'lettuce-chopped'],
     points: 100,
     color: '#58b368',
   },
   {
     id: 'burger',
-    name: 'Burger Klasik',
+    name: 'Classic Burger',
     needs: ['patty-cooked', 'lettuce-chopped', 'bun'],
     points: 150,
     color: '#c98a3d',
   },
   {
     id: 'soup',
-    name: 'Sup Bawang',
+    name: 'Onion Soup',
     needs: ['soup', 'bun'],
     points: 140,
     color: '#d98a2b',
   },
   {
     id: 'onion-burger',
-    name: 'Burger Bawang',
+    name: 'Onion Burger',
     needs: ['patty-cooked', 'onion-chopped', 'bun'],
     points: 160,
     color: '#9a6bc0',
   },
   {
     id: 'full-salad',
-    name: 'Salad Komplit',
+    name: 'Complete Salad',
     needs: ['tomato-chopped', 'lettuce-chopped', 'onion-chopped'],
     points: 130,
     color: '#3fae8a',
@@ -102,8 +102,8 @@ export function recipeById(id) {
 
 export function itemName(itemId) {
   if (!itemId) return '';
-  if (itemId === 'plate') return 'Piring';
-  if (itemId === 'plate-dirty') return 'Piring Kotor';
+  if (itemId === 'plate') return 'Plate';
+  if (itemId === 'plate-dirty') return 'Dirty Plate';
   const v = VARIANTS[itemId];
   if (v) return v.name;
   const ing = INGREDIENTS[itemId];
